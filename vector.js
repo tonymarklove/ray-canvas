@@ -40,6 +40,10 @@ Vector.prototype.add = function(v) {
   return new Vector(this.x + v.x, this.y + v.y, this.z + v.z);
 };
 
+Vector.prototype.sub = function(v) {
+  return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+};
+
 Vector.prototype.scale = function(s) {
   return new Vector(this.x * s, this.y * s, this.z * s);
 };
@@ -58,4 +62,8 @@ Vector.prototype.cross = function(v) {
 
 function vec(x,y,z) {
   return new Vector(x,y,z);
+}
+
+function randVec() {
+  return new Vector(rand(), rand(), rand());
 }

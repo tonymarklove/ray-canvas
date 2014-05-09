@@ -10,7 +10,7 @@ jQuery(function($) {
   var renderWidth = 800;
   var renderHeight = 600;
 
-  var samplesPerPixel = 10;
+  var samplesPerPixel = 1;
   var jitter = false;
 
   var context = document.getElementById("canvas").getContext('2d');
@@ -18,6 +18,11 @@ jQuery(function($) {
 
   var frame = 0;
   var scene = new Scene();
+
+  var moveBallPos = vec(-5, -15, 10);
+
+  scene.addObject({pos: vec(-15, -15, 10), radius: 5});
+  scene.addObject({pos: moveBallPos, radius: 2});
 
   var drawFrame = function(frameStartTime) {
     frame++;
@@ -33,12 +38,9 @@ jQuery(function($) {
         var pixelColor = new Vector();
 
         for (var s = 0; s < samplesPerPixel; s++) {
-          // Apply some jitter to the origin of the view (For Depth of View blur).
           var originJitter = jitter ? up.scale(rand()-0.5).scale(99).add(right.scale(rand()-0.5).scale(99)) : vec(0,0,0);
-          var origin = vec(17,16,8).add(originJitter);
-          var ray = vec((x-renderWidth/2)/100, (y-renderHeight/2)/100, 4).normalize();
-
-          var ray = originJitter.scale(1).add(up.scale(rand()+x).add(right.scale(y+rand()).add(c))).scale(16).normalize();
+          var origin = vec(0,0,15).add(originJitter);
+          var ray = up.scale(rand()+x).add(right.scale(y+rand()).add(c)).scale(16).normalize();
 
           var sample = scene.sample(origin, ray);
           pixelColor = pixelColor.add(sample);
@@ -56,9 +58,19 @@ jQuery(function($) {
     context.putImageData(pixels, 0, 0);
 
     console.debug("Frame " + frame + " ms: " + Math.round(performance.now() - frameStartTime));
-    // window.requestAnimationFrame(drawFrame);
   };
 
   window.requestAnimationFrame(drawFrame);
+
+  $("body").keydown(function(e) {
+    if(e.keyCode == 37) { // left
+      moveBallPos.x--;
+    }
+    else if(e.keyCode == 39) { // right
+      moveBallPos.x++;
+    }
+
+    window.requestAnimationFrame(drawFrame);
+  });
 
 });
