@@ -61,10 +61,16 @@ jQuery(function($) {
 
   $("body").keydown(function(e) {
     if(e.keyCode == 37) { // left
-      moveBallPos.x--;
+      moveBallPos.x += 5;
     }
     else if(e.keyCode == 39) { // right
-      moveBallPos.x++;
+      moveBallPos.x -= 5;
+    }
+    else if(e.keyCode == 38) { // up
+      moveBallPos.y -= 10;
+    }
+    else if(e.keyCode == 40) { // down
+      moveBallPos.y += 10;
     }
     else {
       return true;
