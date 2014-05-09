@@ -10,7 +10,8 @@ jQuery(function($) {
   var renderWidth = 800;
   var renderHeight = 600;
 
-  var samplesPerPixel = 1;
+  var samplesPerPixel = 10;
+  var jitter = false;
 
   var context = document.getElementById("canvas").getContext('2d');
   var pixels = context.createImageData(renderWidth, renderHeight);
@@ -22,7 +23,7 @@ jQuery(function($) {
     frame++;
 
     var look = vec(-6, -16, 0).normalize();
-    var up = vec(0, 0, 1).cross(look).normalize().scale(0.002);
+    var up = vec(0, 0, -1).cross(look).normalize().scale(0.002);
     var right = look.cross(up).normalize().scale(0.002);
     var c = up.add(right).scale(-256).add(look);
 
@@ -33,7 +34,7 @@ jQuery(function($) {
 
         for (var s = 0; s < samplesPerPixel; s++) {
           // Apply some jitter to the origin of the view (For Depth of View blur).
-          var originJitter = up.scale(rand()-0.5).scale(99).add(right.scale(rand()-0.5).scale(99));
+          var originJitter = jitter ? up.scale(rand()-0.5).scale(99).add(right.scale(rand()-0.5).scale(99)) : vec(0,0,0);
           var origin = vec(17,16,8).add(originJitter);
           var ray = vec((x-renderWidth/2)/100, (y-renderHeight/2)/100, 4).normalize();
 
@@ -43,7 +44,7 @@ jQuery(function($) {
           pixelColor = pixelColor.add(sample);
         }
 
-        pixelColor = pixelColor.scale(255);
+        pixelColor = pixelColor.scale(1/samplesPerPixel).scale(255);
 
         pixels.data[offset + 0] = pixelColor.x;
         pixels.data[offset + 1] = pixelColor.y;
