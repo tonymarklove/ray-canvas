@@ -55,3 +55,7 @@ Vector.prototype.cross = function(v) {
 
   return new Vector(x, y, z);
 };
+
+function vec(x,y,z) {
+  return new Vector(x,y,z);
+}
