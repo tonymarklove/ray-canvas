@@ -53,8 +53,16 @@ Scene.prototype.sample = function(origin, direction, recurseDepth) {
   }
 
   var reflectVec = direction.sub(normal.scale(normal.dot(direction) * 2));
-  var color = lambertian > 0 ? Math.pow(intersectPointToLight.dot(reflectVec), 99) : 0;
-  var sample = this.sample(intersectPoint, reflectVec, recurseDepth ? recurseDepth + 1 : 1);
+  var color = (settings.reflections && lambertian > 0) ? Math.pow(intersectPointToLight.dot(reflectVec), 99) : 0;
+  var sample = new Vector();
+
+  if (settings.reflections) {
+    sample = this.sample(intersectPoint, reflectVec, recurseDepth ? recurseDepth + 1 : 1);
+  } else {
+    var ballColor = vec(0.08, 0.26, 0.36);
+    var diffuseColor = ballColor.scale(vec(0, 0, 1).dot(normal)).add(ballColor);
+    sample = diffuseColor;
+  }
 
   return vec(color, color, color).add(sample.scale(settings.shinyness));
 };

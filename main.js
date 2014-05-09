@@ -18,8 +18,8 @@ jQuery(function($) {
 
   var moveBallPos = vec(-5, -15, 10);
 
-  scene.addObject({pos: vec(-28, -22, 5), radius: 5});
-  scene.addObject({pos: moveBallPos, radius: 10});
+  // scene.addObject({pos: vec(-28, -22, 5), radius: 5});
+  // scene.addObject({pos: moveBallPos, radius: 10});
 
   var drawFrame = function(frameStartTime) {
     frame++;
