@@ -37,7 +37,7 @@ jQuery(function($) {
         for (var s = 0; s < settings.samplesPerPixel; s++) {
           var originJitter = settings.jitter ? up.scale(rand()-0.5).scale(99).add(right.scale(rand()-0.5).scale(99)) : vec(0,0,0);
           var origin = vec(0,0,15).add(originJitter);
-          var ray = up.scale(rand()+x).add(right.scale(y+rand()).add(c)).scale(16).normalize();
+          var ray = originJitter.scale(-1).add(up.scale(rand()+x).add(right.scale(y+rand()).add(c)).scale(16)).normalize();
 
           var sample = scene.sample(origin, ray);
           pixelColor = pixelColor.add(sample);
@@ -78,5 +78,9 @@ jQuery(function($) {
 
     window.requestAnimationFrame(drawFrame);
   });
+
+  window.renderFrame = function() {
+    window.requestAnimationFrame(drawFrame);
+  };
 
 });
