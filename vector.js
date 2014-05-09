@@ -60,10 +60,14 @@ Vector.prototype.cross = function(v) {
   return new Vector(x, y, z);
 };
 
+Vector.lerp = function(a, b, t) {
+  return a.scale(t).add(b.scale(1.0-t));
+}
+
 function vec(x,y,z) {
   return new Vector(x,y,z);
 }
 
 function randVec() {
-  return new Vector(rand(), rand(), rand());
+  return new Vector(rand(), rand(), 0);
 }
