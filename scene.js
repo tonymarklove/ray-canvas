@@ -1,18 +1,23 @@
 var Scene = function() {
   this.objects = [];
   this.lights = [];
-  this.lightPos = vec(5, 0, 20);
+  this.lightPos = vec(-15, 0, 20);
 };
 
 Scene.prototype.addObject = function(obj) {
   this.objects.push(obj);
 };
 
-Scene.prototype.sample = function(origin, direction) {
+Scene.prototype.sample = function(origin, direction, recurseDepth) {
+  if (recurseDepth && recurseDepth > 5) {
+    return vec(0, 0, 0);
+  }
+
   var trace = this.traceRay(origin, direction);
 
-  if (trace.hit == 0) {
-    return vec(0.7, 0.6, 1).scale(Math.pow(1-direction.z, 4));
+  if (trace.hit == "sky") {
+    var skyColor = vec(0.44, 0.7, 0.85);
+    return skyColor.scale(Math.pow(1-direction.z, 2.2));
   }
 
   var intersectPoint = origin.add(direction.scale(trace.t));
@@ -25,7 +30,15 @@ Scene.prototype.sample = function(origin, direction) {
     lambertian = 0;
   }
 
-  if (trace.hit == 1) {
+  if (settings.shadows) {
+    var shadowTrace = this.traceRay(intersectPoint, intersectPointToLight);
+
+    if (shadowTrace.hit != "sky") {
+      lambertian = 0;
+    }
+  }
+
+  if (trace.hit == "ground") {
     var factor = lambertian * 0.7 + 0.1;
 
     intersectPoint = intersectPoint.scale(0.2);
@@ -37,21 +50,21 @@ Scene.prototype.sample = function(origin, direction) {
   }
 
   var color = lambertian > 0 ? Math.pow(intersectPointToLight.dot(halfVec), 99) : 0;
-  var sample = this.sample(intersectPoint, halfVec);
+  var sample = this.sample(intersectPoint, halfVec, recurseDepth ? recurseDepth + 1 : 1);
 
-  return vec(color, color, color).add(sample.scale(0.5));
+  return vec(color, color, color).add(sample.scale(settings.shinyness));
 };
 
 Scene.prototype.traceRay = function(origin, direction) {
   var t = 1000000000;
-  var m = 0;
+  var m = "sky";
   var p = -(origin.z / direction.z);
   var n = new Vector();
 
   if (p > 0.01) {
     t = p;
     n = new Vector(0,0,1);
-    m = 1;
+    m = "ground";
   }
 
   this.objects.forEach(function(sphere) {
@@ -68,7 +81,7 @@ Scene.prototype.traceRay = function(origin, direction) {
         // New smallest distance
         t = cameraSphereDist;
         n = originToCenter.add(direction).scale(cameraSphereDist).normalize();
-        m = 2;
+        m = "object";
      }
   });
 

@@ -10,9 +10,6 @@ jQuery(function($) {
   var renderWidth = 800;
   var renderHeight = 600;
 
-  var samplesPerPixel = 1;
-  var jitter = false;
-
   var context = document.getElementById("canvas").getContext('2d');
   var pixels = context.createImageData(renderWidth, renderHeight);
 
@@ -21,7 +18,7 @@ jQuery(function($) {
 
   var moveBallPos = vec(-5, -15, 10);
 
-  scene.addObject({pos: vec(-15, -15, 10), radius: 5});
+  scene.addObject({pos: vec(-28, -22, 5), radius: 5});
   scene.addObject({pos: moveBallPos, radius: 2});
 
   var drawFrame = function(frameStartTime) {
@@ -37,8 +34,8 @@ jQuery(function($) {
         var offset = x * 4 + (y * 4 * renderWidth);
         var pixelColor = new Vector();
 
-        for (var s = 0; s < samplesPerPixel; s++) {
-          var originJitter = jitter ? up.scale(rand()-0.5).scale(99).add(right.scale(rand()-0.5).scale(99)) : vec(0,0,0);
+        for (var s = 0; s < settings.samplesPerPixel; s++) {
+          var originJitter = settings.jitter ? up.scale(rand()-0.5).scale(99).add(right.scale(rand()-0.5).scale(99)) : vec(0,0,0);
           var origin = vec(0,0,15).add(originJitter);
           var ray = up.scale(rand()+x).add(right.scale(y+rand()).add(c)).scale(16).normalize();
 
@@ -46,7 +43,7 @@ jQuery(function($) {
           pixelColor = pixelColor.add(sample);
         }
 
-        pixelColor = pixelColor.scale(1/samplesPerPixel).scale(255);
+        pixelColor = pixelColor.scale(1/settings.samplesPerPixel).scale(255);
 
         pixels.data[offset + 0] = pixelColor.x;
         pixels.data[offset + 1] = pixelColor.y;
@@ -68,6 +65,9 @@ jQuery(function($) {
     }
     else if(e.keyCode == 39) { // right
       moveBallPos.x++;
+    }
+    else {
+      return true;
     }
 
     window.requestAnimationFrame(drawFrame);
