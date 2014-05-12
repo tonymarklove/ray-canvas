@@ -1,10 +1,10 @@
 var settings = {
 
-  samplesPerPixel: 1,
+  samplesPerPixel: 10,
   jitter: false,
-  textures: false,
-  reflections: false,
-  shadows: false,
+  textures: true,
+  reflections: true,
+  shadows: true,
   shinyness: 0.5
 
 };
